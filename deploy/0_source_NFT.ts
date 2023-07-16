@@ -15,4 +15,4 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 };
 
 export default func;
-func.tags = ['SourceNFT'];
+func.tags = ['src_nft'];
