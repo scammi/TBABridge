@@ -1,45 +1,35 @@
-const fs = require("fs")
-const hre = require("hardhat")
-const ethers = hre.ethers
-const deployed = JSON.parse(fs.readFileSync("./deployed.json"))
-const { getContracts } = require("./utils")
-const { sourceChainConfig } = require("../config.js")
+import { ethers, network } from "hardhat"
+import { ERC721GatewaySource, SourceNFT } from "../typechain-types"
 
-const tokenId = 19; // The NFT token to be bridge.
+const tokenId = 3; // The NFT token to be bridge.
 const destinationMintAddress = '0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A';
 
-const grantNFTApprovalToSourceGateway = async (tokenId) => {
-  const { sourceNFT } = await getContracts()
+const grantNFTApprovalToSourceGateway = async (tokenId: number) => {
+  const sourceNFT = await ethers.getContract<SourceNFT>('SourceNFT')
+  const sourceGateway = await ethers.getContract<ERC721GatewaySource>('ERC721GatewaySource')
 
   const approveTx = await sourceNFT.approve(
-    deployed.sourceChain.gateway,
+    await sourceGateway.getAddress(),
     tokenId,
-    {
-      gasLimit: 15000000,
-      gasPrice: ethers.utils.parseUnits(sourceChainConfig.gasPrice, "gwei"),
-    }
   )
 
   console.log(`Gateway approved usage of NFT ${tokenId}`)
   await approveTx.wait()
 }
 
-const enterTheGateway = async (tokenId) => {
-  const { gatewaySource } = await getContracts()
-
-  const anyCallTx = await gatewaySource.Swapout(
-    ethers.BigNumber.from(String(tokenId)),
+const enterTheGateway = async (tokenId: number) => {
+  const chainId = network.config.chainId ?? 137
+  const sourceGateway = await ethers.getContract<ERC721GatewaySource>('ERC721GatewaySource')
+  const anyCallTx = await sourceGateway.Swapout(
+    String(tokenId),
     destinationMintAddress,
-    ethers.BigNumber.from("43114"),
-    {
-      gasLimit: 15000000,
-      gasPrice: ethers.utils.parseUnits(sourceChainConfig.gasPrice, "gwei"),
-    }
+    chainId,
   )
+
   console.log('Entering the void .... ')
   const swapoutReceipt = await anyCallTx.wait()
 
-  console.log('Locked token at hash > ', swapoutReceipt.transactionHash)
+  console.log('Locked token at hash > ', swapoutReceipt?.hash)
 }
 
 try {

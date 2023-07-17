@@ -10,7 +10,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
       from: deployer,
       gasLimit: 4000000,
       log: true,
-      args: [],
+      args: ["Source NFT", "SOURCE_NFT"],
     });
 };
 
