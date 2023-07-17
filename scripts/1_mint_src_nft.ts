@@ -1,5 +1,5 @@
 import { ethers, network } from "hardhat";
-import { DestinationNFT, IRegistry, SourceNFT } from "../typechain-types";
+import { ERC721GatewaySource, IRegistry, SourceNFT } from "../typechain-types";
 
 const mintSourceNFT = async () => {
   const sourceNFT = await ethers.getContract<SourceNFT>('SourceNFT')
@@ -51,11 +51,42 @@ const createAccount = async (tokenId: number) => {
   // return accountCreated
 }
 
+const grantNFTApprovalToSourceGateway = async (tokenId: number) => {
+  const sourceNFT = await ethers.getContract<SourceNFT>('SourceNFT')
+  const sourceGateway = await ethers.getContract<ERC721GatewaySource>('ERC721GatewaySource')
+
+  const approveTx = await sourceNFT.approve(
+    await sourceGateway.getAddress(),
+    tokenId,
+  )
+
+  console.log(`Gateway approved usage of NFT ${tokenId}`)
+  await approveTx.wait()
+}
+
+const enterTheGateway = async (tokenId: number) => {
+  const destinationMintAddress = '0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A'
+  const sourceGateway = await ethers.getContract<ERC721GatewaySource>('ERC721GatewaySource')
+
+  const anyCallTx = await sourceGateway.Swapout(
+    String(tokenId),
+    destinationMintAddress,
+    network.config.chainId ?? 137,
+  )
+
+  console.log('Entering the void .... ')
+  const swapoutReceipt = await anyCallTx.wait()
+
+  console.log('Locked token at hash > ', swapoutReceipt?.hash)
+}
+
 try {
   (async () => {
     const mintedId = await mintSourceNFT()
-    // const createdAccount = await createAccount(mintedId)
+    const createdAccount = await createAccount(mintedId)
     // todo found account
+    await grantNFTApprovalToSourceGateway(mintedId)
+    await enterTheGateway(mintedId)
   
     console.log(`Success.`)
     process.exitCode = 0
