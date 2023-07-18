@@ -21,16 +21,17 @@ const main = async () => {
     console.log('SwapOut event caught:', tokenId, sender, receiver )
   });
 
-  console.log('Listening for events on Polygon chain...')
+  console.log('- Listening for events on Polygon chain...')
 
   // Function to call on the Avax chain and save event data to an object
   const bridgeToDestination = async ({ tokenId, receiver }) => {
     const originalUri = await sourceNFT.tokenURI(tokenId);
 
-    const mintTx = await gatewayDestination.Swapin(tokenId, receiver, originalUri);
+    console.log('- Bridging..')
+    const mintTx = await gatewayDestination.Swapin(tokenId, receiver, originalUri, { gasLimit: 6000000  });
 
     const receipt = await mintTx.wait();
-    console.log("Bridged at hash > ", receipt?.hash);
+    console.log('- Bridged at hash > ', receipt?.hash);
   }
 };
 

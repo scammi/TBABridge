@@ -5,6 +5,7 @@ import '@nomicfoundation/hardhat-ethers';
 import '@nomicfoundation/hardhat-ethers';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
+import '@nomicfoundation/hardhat-verify'
 
 const RPC_URL_SRC = process.env.RPC_URL_SRC
 const RPC_URL_DEST = process.env.RPC_URL_DEST
