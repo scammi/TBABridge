@@ -31,6 +31,9 @@ const config: HardhatUserConfig = {
         initialIndex: 0,
         count: 10,
       },
+      // companionNetworks: {
+      //   destination: 'destination' 
+      // }
     },
     destination: {
       url: RPC_URL_DEST,
