@@ -39,16 +39,16 @@ const createAccount = async (tokenId: number) => {
   const createAccountReceipt = await createAccountTrx.wait()
   console.log("- Account created at hash > ", createAccountReceipt?.hash)
 
-  // const accountCreated = await registrySource.account(
-  //   registrySourceAddress,
-  //   chainId,
-  //   sourceTokenAddress,
-  //   tokenId,
-  //   0,
-  // )
+  const accountCreated = await registrySource.account(
+    registrySourceAddress,
+    chainId,
+    sourceTokenAddress,
+    tokenId,
+    0,
+  )
 
-  // console.log('- New account > ', accountCreated)
-  // return accountCreated
+  console.log('- New account > ', accountCreated)
+  return accountCreated
 }
 
 const grantNFTApprovalToSourceGateway = async (tokenId: number) => {
@@ -60,8 +60,24 @@ const grantNFTApprovalToSourceGateway = async (tokenId: number) => {
     tokenId,
   )
 
-  console.log(`Gateway approved usage of NFT ${tokenId}`)
+  console.log(`- Gateway approved usage of NFT ${tokenId}`)
   await approveTx.wait()
+}
+
+const foundAccount = async(account: string) => {
+  const etherAmount = ethers.parseEther('1');
+
+  // Create the transaction object
+  const transaction = {
+    to: account,
+    value: etherAmount,
+  };
+
+  // Send the transaction
+  console.log('- Founding account...');
+  const { deployer } = await ethers.getNamedSigners();
+  const txResponse = await deployer.sendTransaction(transaction);
+  console.log('- Account founded at >', txResponse.hash);
 }
 
 const enterTheGateway = async (tokenId: number) => {
@@ -74,17 +90,17 @@ const enterTheGateway = async (tokenId: number) => {
     network.config.chainId ?? 137,
   )
 
-  console.log('Entering the void .... ')
+  console.log('- Entering the void .... ')
   const swapoutReceipt = await anyCallTx.wait()
 
-  console.log('Locked token at hash > ', swapoutReceipt?.hash)
+  console.log('- Locked token at hash > ', swapoutReceipt?.hash)
 }
 
 try {
   (async () => {
     const mintedId = await mintSourceNFT()
     const createdAccount = await createAccount(mintedId)
-    // todo found account
+    await foundAccount(createdAccount);
     await grantNFTApprovalToSourceGateway(mintedId)
     await enterTheGateway(mintedId)
   
