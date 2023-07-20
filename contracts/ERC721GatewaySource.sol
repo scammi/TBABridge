@@ -49,6 +49,9 @@ contract ERC721GatewaySource is ERC721Gateway {
     {
         (bool sucesfulSwapout, ) = _swapout(tokenId);
 
+        // Lock TBA
+        // Is there a way to grant controll to the tba onto the bridge token ?
+
         if (!sucesfulSwapout) revert SwapOutFailed();
 
         swapoutSeq++;

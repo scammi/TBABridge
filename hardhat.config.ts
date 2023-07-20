@@ -25,6 +25,7 @@ const config: HardhatUserConfig = {
       },
     },
     source: {
+      gasPrice: 93700000000,
       url: RPC_URL_SRC,
       chainId: 137,
       accounts: {

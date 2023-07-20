@@ -18,7 +18,7 @@ const main = async () => {
     GATEWAY_DESTINATION_SOURCE,
     destinationSigner
   )
-
+  
   // Listen to the SwapOut event on Polygon
   gatewaySource.on(gatewaySource.getEvent('SwapOut'), (tokenId, sender, receiver, toChainID) => {
     bridgeToDestination({ tokenId, receiver })
@@ -28,17 +28,23 @@ const main = async () => {
 
   console.log('- Listening for events on Polygon chain...')
 
-  // Function to call on the Avax chain and save event data to an object
   const bridgeToDestination = async ({ tokenId, receiver }) => {
     const originalUri = await sourceNFT.tokenURI(tokenId);
-
+  
     console.log('- Bridging..')
     const mintTx = await gatewayDestination.Swapin(tokenId, receiver, originalUri, { gasLimit: 6000000  });
-
+  
     const receipt = await mintTx.wait();
     console.log('- Bridged at hash > ', receipt?.hash);
   }
+  // bridgeToDestination({ tokenId: 10, receiver: '0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A' })
+
+  // Function to call on the Avax chain and save event data to an object
 };
 
-
-main();
+try {
+  main();
+} catch(e) {
+  console.log('Something went wrong, initializing relayer...')
+  main();
+}

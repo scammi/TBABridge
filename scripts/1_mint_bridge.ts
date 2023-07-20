@@ -65,7 +65,7 @@ const grantNFTApprovalToSourceGateway = async (tokenId: number) => {
 }
 
 const foundAccount = async(account: string) => {
-  const etherAmount = ethers.parseEther('1');
+  const etherAmount = ethers.parseEther('.01');
 
   // Create the transaction object
   const transaction = {
