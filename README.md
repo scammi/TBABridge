@@ -8,6 +8,8 @@ Regarding bridges, they are not trivial, they account for the biggest [hacks](ht
 
 Most implementations will follow a similar structure, and they’ll vary in the way messages are being passed between chains. A gateway on the source chain will lock the token being bridged and the event will be emitted, the relayer network will validate the incoming message and if valid relay it to a destination chain. On the destination chain most likely the miner contract will be owned by the destination gateway, minting and grating to the provided receiver. As seen in the diagram following the black arrows.
 
+![diagram](https://i.imgur.com/fjVHfTL.png)
+
 Specifically, this proposal uses a simple server script that listens to events on one chain and forwards the message to the destination gateway. This is not meant for production, due to its very centralized nature, but there are ways to work around them. We’ve investigated multiple solutions and tried implementing [multiChai](https://multichain.org/). The impression is that current solutions come short of the expected latency a game needs. We believe that handling the transfer by internal tools today would give users the best experience.
 
 Finally, we would like to mention an alternative to controlling bridge assets. Given that most likely gaming NFTs will be on L2 chains, due to them being cheaper and faster, more appropriate for gaming. But there are ways in which a token on an L1 can hold and control the assets on the L2. As an example, the registry on the destination(L2) chain, allows for the minting of accounts to NFTs on the source chain (L1), the gateway should be granted permission to interact with this account. This would allow for the relayer to pass calls onto the destination account coming from the source NFT.
@@ -63,3 +65,5 @@ yarn hardhat run scrips/1_mint_bridge.ts
 4. [Lock at source gateway](https://polygonscan.com/tx/0xea9af9e26170de9e5491056ef83c442914ac0f93c82a4e1a3197d862ceebb2c6)
 
 5. [Bridge at destination](https://snowtrace.io/tx/0xbf87587bb5d8c92259bdf984cf0cb4d3793d7d742976c9043065484aeed6a73b)
+
+![cli](https://i.imgur.com/rjTALjM.gif)
